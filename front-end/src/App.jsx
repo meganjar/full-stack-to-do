@@ -1,30 +1,56 @@
-import { useEffect } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useEffect, useState, useRef } from 'react'
 import './App.css'
 
+
 function App() {
-  
-async function test() {
-  const res = await fetch('http://localhost:8080/test')
+
+  const [todos, setTodos] = useState([])
+  console.log(todos)
+async function todo() {
+  const res = await fetch('http://localhost:8080/api/todos')
   const data = await res.json()
   console.log(res)
   console.log(data)
 }
 
   useEffect(() => {
- test()
+ todo()
   }, [])
+const textRef = useRef()
+
+async function handleSubmit(e) {
+  e.preventDefault()
+  const todo = {
+    text: textRef.current.value,
+    
+  
+    }
+  fetch('http://localhost:8080/api/todos', {
+    method: 'POST',
+    body: JSON.stringify(todo),
+    headers: {
+      'Content-Type': 'application/json'
+    }
+});
 
 
 
   return (
     <>
       <div>
-        hello
+       <h1>Todos</h1>
+       <form onSubmit={handleSubmit}>
+          <input ref={textRef} type="text" />
+          <button>Add</button>
+       </form>
+        <ul>
+          {todos.map((todo) => (
+            <li key={todo._id}>{todo.text}</li>
+          ))}
+          </ul>
       </div>
     </>
   )
 }
-
+}
 export default App
