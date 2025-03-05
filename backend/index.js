@@ -1,16 +1,39 @@
-// 1. import
-import express from 'express';
+import express from 'express'
 import cors from 'cors'
 import 'dotenv/config'
-// 2 create app
-const app = express();
+
+import connectDB from './db.js'
+
+import Todo from './model.js'
+
+const app = express()
+
 const port = 8080
+
 app.use(cors())
-// 3. One route
-app.get('/', (req, res) => {
-res.send('Hello World!');
+app.use(express.json()) // <--- if we want to handle a post request
+app.get('/api/todos', async (req, res) => {
+    try {
+        const todos = await Todo.find({})
+        res.status(200).json(todos)
+    } catch(err) {
+        console.log(err)
+        res.status(400).json(err)
+    }
 })
-// listen on a specific port
+app.post('/api/todos', async (req, res) => {
+    try {
+        const todo = await Todo.create(req.body)
+        res.status(200).json(todo)
+        console.log(todo)
+        res.json(todo)
+    } catch(err) {
+        console.log(err)
+        res.status(400).json(err)
+    }
+})
+
 app.listen(port, () => {
-console.log(`Example app listening on port ${port}`);
+    console.log('Listening on port: ', port)
+    connectDB()
 })
